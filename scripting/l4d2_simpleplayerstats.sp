@@ -2590,6 +2590,7 @@ public Action Event_WitchHarrassed(Event event,const char[] name, bool dontBroad
 	
 	int harrasserId = event.GetInt("userid");
 	int harrasserClientId = GetClientOfUserId(harrasserId);
+	bool first = event.GetBool("first");
 	
 	//We will only process valid human survivor players
 	if (!IS_HUMAN_SURVIVOR(harrasserClientId)) {
@@ -2600,7 +2601,9 @@ public Action Event_WitchHarrassed(Event event,const char[] name, bool dontBroad
 		return Plugin_Continue;
 	}
 	
-	UpdateStat(harrasserClientId, STATS_WITCH_HARASSED, 1);
+	if (first){
+		UpdateStat(harrasserClientId, STATS_WITCH_HARASSED, 1);
+	}
 	
 	return Plugin_Continue;
 }
