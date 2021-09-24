@@ -45,7 +45,7 @@
 
 ### Installation
 
-Download the [latest](https://github.com/sourcemod-plugins/l4d2-player-stats/releases) version from the repository and extract the contents to the root of the left 4 dead 2 server installation directory. 
+Download the [latest](https://github.com/Kahdeg-15520487/l4d2_simpleplayerstats.sp/releases) version from the repository and extract the contents to the root of the left 4 dead 2 server installation directory. 
 
 ### Configuration
 
