@@ -310,6 +310,8 @@ public void OnPluginStart()
 	HookEvent("witch_killed", Event_WitchKilled, EventHookMode_Post);
 	HookEvent("tank_killed", Event_TankKilled, EventHookMode_Post);
 	
+	HookEvent("witch_harasser_set", Event_WitchHarrassed, EventHookMode_Post);
+	
 	//Perform one time initialization when the player first connects to the server (shouldn't be called on map change)
 	HookEvent("player_connect", Event_PlayerConnect, EventHookMode_Post);
 	//Note: We use this event instead of OnClientDisconnect because this event does not get fired on map change.
@@ -2577,6 +2579,28 @@ public Action Event_PlayerIncapped(Event event, const char[] name, bool dontBroa
 	}
 	
 	UpdateStat(victimClientId, STATS_SURVIVOR_INCAPPED, 1);
+	
+	return Plugin_Continue;
+}
+
+/**
+* Callback for witch harrass events. Records basic stats only
+*/
+public Action Event_WitchHarrassed(Event event,const char[] name, bool dontBroadcast){
+	
+	int harrasserId = event.GetInt("userid");
+	int harrasserClientId = GetClientOfUserId(harrasserId);
+	
+	//We will only process valid human survivor players
+	if (!IS_HUMAN_SURVIVOR(harrasserClientId)) {
+		return Plugin_Continue;
+	}
+	
+	if (!AllowCollectStats()) {
+		return Plugin_Continue;
+	}
+	
+	UpdateStat(harrasserClientId, STATS_WITCH_HARASSED, 1);
 	
 	return Plugin_Continue;
 }
