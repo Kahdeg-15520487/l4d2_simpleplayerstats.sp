@@ -135,6 +135,7 @@
 
 #define STATS_TANK_KILLED "tank_killed"
 #define STATS_TANK_MELEE "tank_melee"
+#define STATS_CAR_ALARMED "car_alarm"
 
 #define ZC_COMMON       "infected"
 #define ZC_SMOKER       "smoker"
@@ -166,7 +167,6 @@ StringMap g_mPlayersInitialized;
 
 //Prepared statements
 DBStatement g_hQueryRecordExists = null;
-DBStatement g_hQueryHideExtras = null;
 
 bool g_bPlayerInitialized[MAXPLAYERS + 1] = false;
 bool g_bInitializing[MAXPLAYERS + 1] = false;
@@ -203,7 +203,11 @@ char g_sBasicStats[][128] =  {
 	STATS_SURVIVOR_INCAPPED ,
 	STATS_SURVIVOR_FRIENDLYFIRE ,
 	
+	STATS_WEAPON_CLASS ,
+	STATS_WEAPON_SPECIAL ,
 	STATS_WEAPON_RIFLE ,
+	STATS_WEAPON_SMG ,
+	STATS_WEAPON_SNIPER ,
 	STATS_WEAPON_SHOTGUN ,
 	STATS_WEAPON_MELEE ,
 	STATS_WEAPON_DEAGLE ,
@@ -237,7 +241,9 @@ char g_sBasicStats[][128] =  {
 	STATS_WITCH_HARASSED ,
 	
 	STATS_TANK_KILLED ,
-	STATS_TANK_MELEE
+	STATS_TANK_MELEE,
+	
+	STATS_CAR_ALARMED,
 };
 
 public Plugin myinfo = 
@@ -297,6 +303,8 @@ public void OnPluginStart()
 	//HookEvent("infected_death", Event_InfectedDeath, EventHookMode_Post);
 	HookEvent("player_hurt", Event_PlayerHurt, EventHookMode_Post);
 	HookEvent("player_incapacitated", Event_PlayerIncapped, EventHookMode_Post);
+	HookEvent("friendly_fire", Event_FriendlyFire, EventHookMode_Post);
+	
 	HookEvent("round_start", Event_OnRoundStart, EventHookMode_PostNoCopy);
 	HookEvent("round_end", Event_OnRoundEnd, EventHookMode_PostNoCopy);
 	HookEvent("player_team", Event_PlayerTeam, EventHookMode_Post);
@@ -311,6 +319,8 @@ public void OnPluginStart()
 	HookEvent("tank_killed", Event_TankKilled, EventHookMode_Post);
 	
 	HookEvent("witch_harasser_set", Event_WitchHarrassed, EventHookMode_Post);
+	
+	HookEvent("triggered_car_alarm", Event_CarAlarmed, EventHookMode_Post);
 	
 	//Perform one time initialization when the player first connects to the server (shouldn't be called on map change)
 	HookEvent("player_connect", Event_PlayerConnect, EventHookMode_Post);
@@ -1525,7 +1535,7 @@ public void TQ_ShowPlayerRankPanel(Database db, DBResultSet results, const char[
 			// - The target player did not opt out extra stats from public viewing
 			// - The requesting player is viewing his own
 			// - The requesting player is an admin
-			if (!HideExtrasFromPublic(selSteamId) || IsSamePlayer(clientId, selSteamId) || Client_IsAdmin(clientId)) {
+			if (IsSamePlayer(clientId, selSteamId) || Client_IsAdmin(clientId)) {
 				Format(msg, sizeof(msg), "More Stats");
 				panel.DrawItem(msg, ITEMDRAW_DEFAULT);
 				
@@ -1551,34 +1561,6 @@ public void TQ_ShowPlayerRankPanel(Database db, DBResultSet results, const char[
 
 public bool IsSamePlayer(int client, const char[] steamId) {
 	return client == Client_FindBySteamId(steamId);
-}
-
-public bool HideExtrasFromPublic(const char[] steamId) {
-	int count = 0;
-	
-	if (g_hQueryHideExtras == null) {
-		char error[255];
-		g_hQueryHideExtras = SQL_PrepareQuery(g_hDatabase, "SELECT hide_extra_stats FROM STATS_PLAYERS s WHERE s.steam_id = ?", error, sizeof(error));
-		if (g_hQueryHideExtras == null) {
-			Error("HideExtrasFromPublic :: Unable to prepare sql query (Reason: %s)", error);
-			return false;
-		}
-	}
-	
-	SQL_BindParamString(g_hQueryHideExtras, 0, steamId, false);
-	
-	if (!SQL_Execute(g_hQueryHideExtras)) {
-		Error("Unable to execute query for HideExtrasFromPublic for steam id '%s'", steamId);
-		return false;
-	}
-	
-	if (SQL_FetchRow(g_hQueryHideExtras)) {
-		count = SQL_FetchInt(g_hQueryHideExtras, 0);
-	}
-	
-	Debug("Hide extra stats from public (steamId = %s, result = %s)", steamId, (count > 0) ? "Yes" : "No");
-	
-	return count > 0;
 }
 
 /**
@@ -2583,6 +2565,25 @@ public Action Event_PlayerIncapped(Event event, const char[] name, bool dontBroa
 	return Plugin_Continue;
 }
 
+public Action Event_CarAlarmed(Event event, const char[] name, bool dontBroadcast){
+	
+	int alarmerId = event.GetInt("userid");
+	int alarmerClientId = GetClientOfUserId(alarmerId);
+	
+	//We will only process valid human survivor players
+	if (!IS_HUMAN_SURVIVOR(alarmerClientId)) {
+		return Plugin_Continue;
+	}
+	
+	if (!AllowCollectStats()) {
+		return Plugin_Continue;
+	}
+	
+	UpdateStat(alarmerClientId, STATS_CAR_ALARMED, 1);
+	
+	return Plugin_Continue;
+}
+
 /**
 * Callback for witch harrass events. Records basic stats only
 */
@@ -2807,6 +2808,24 @@ public Action Event_InfectedDeath(Event event, const char[] name, bool dontBroad
 		}
 	}
 	*/
+	return Plugin_Continue;
+}
+
+public Action Event_FriendlyFire(Event event, const char[] name, bool dontBroadcast) {
+	int attackerId = event.GetInt("guilty");
+	int attackerClientId = GetClientOfUserId(attackerId);
+	
+	//We will only process valid human survivor players
+	if (!IS_HUMAN_SURVIVOR(attackerClientId)) {
+		return Plugin_Continue;
+	}
+	
+	if (!AllowCollectStats()) {
+		return Plugin_Continue;
+	}
+	
+	UpdateStat(attackerClientId, STATS_SURVIVOR_FRIENDLYFIRE, 1);
+	
 	return Plugin_Continue;
 }
 

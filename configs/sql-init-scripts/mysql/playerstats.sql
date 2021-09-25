@@ -19,7 +19,10 @@ DELIMITER ;
 
 CREATE TABLE IF NOT EXISTS `STATS_PLAYERS` (
 	`steam_id` varchar(64) NOT NULL,
+	`steam_id64` varchar(64) NULL,
+	`play_style` varchar(255) NULL,
 	`last_known_alias` varchar(255) DEFAULT NULL,
+	`last_known_alias_unicode` varchar(255) DEFAULT NULL,
 	`last_join_date` timestamp NULL DEFAULT current_timestamp(),
 	`hide_extra_stats` tinyint(4) DEFAULT 0,
 	`survivor_healed` int(10) unsigned NOT NULL DEFAULT 0,
@@ -66,6 +69,7 @@ CREATE TABLE IF NOT EXISTS `STATS_PLAYERS` (
 
 	`tank_killed` int(10) unsigned NOT NULL DEFAULT 0,
 	`tank_melee` int(10) unsigned NOT NULL DEFAULT 0,
+	`car_alarm` int(10) unsigned NOT NULL DEFAULT 0,
 	`create_date` timestamp NOT NULL DEFAULT current_timestamp(),
 	PRIMARY KEY (`steam_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -79,7 +83,10 @@ CREATE TABLE IF NOT EXISTS `STATS_SKILLS` (
 
 CREATE VIEW `STATS_VW_PLAYER_RANKS` AS
 SELECT `b`.`steam_id` AS `steam_id`,
+	   `b`.`steam_id64` AS `steam_id64`,
+	   `b`.`play_style` AS `play_style`,
        `b`.`last_known_alias` AS `last_known_alias`,
+	   `b`.`last_known_alias_unicode` AS `last_known_alias_unicode`,
        date_format(`b`.`last_join_date`, '%Y-%m-%d %h:%i:%s %p') AS `last_join_date`,
 
 		`b`.`survivor_healed` as `survivor_healed`,
@@ -126,14 +133,18 @@ SELECT `b`.`steam_id` AS `steam_id`,
 
 		`b`.`tank_killed` as `tank_killed`,
 		`b`.`tank_melee` as `tank_melee`,
+		`b`.`car_alarm` as `car_alarm`,
 		
        round(`b`.`total_points`, 2) AS `total_points`,
        `b`.`rank_num` AS `rank_num`,
        date_format(`b`.`create_date`, '%Y-%m-%d %h:%i:%s %p') AS `create_date`
 FROM
-  (SELECT `s`.`steam_id` AS `steam_id`,
-          `s`.`last_known_alias` AS `last_known_alias`,
-          `s`.`last_join_date` AS `last_join_date`,
+  (SELECT	`s`.`steam_id` AS `steam_id`,
+			`s`.`steam_id64` AS `steam_id64`,
+			`s`.`play_style` AS `play_style`,
+			`s`.`last_known_alias` AS `last_known_alias`,
+			`s`.`last_known_alias_unicode` AS `last_known_alias_unicode`,
+			`s`.`last_join_date` AS `last_join_date`,
 
 			`s`.`survivor_healed` as `survivor_healed`,
 			`s`.`survivor_defibed` as `survivor_defibed`,
@@ -179,6 +190,7 @@ FROM
 
 			`s`.`tank_killed` as `tank_killed`,
 			`s`.`tank_melee` as `tank_melee`,
+			`s`.`car_alarm` as `car_alarm`,
 		  
           `APPLY_MODIFIER`('survivor_healed', `s`.`survivor_healed`)
 		- `APPLY_MODIFIER`('survivor_death', `s`.`survivor_death`)
@@ -205,3 +217,24 @@ FROM
 										+ `s`.`tank_killed` DESC,`s`.`create_date`) AS `rank_num`,
           `s`.`create_date` AS `create_date`
    FROM `STATS_PLAYERS` `s`) `b`;
+   
+CREATE TABLE DISPLAY_TEMPLATE (
+  name VARCHAR(255) NOT NULL,
+  title VARCHAR(255) DEFAULT NULL,
+  PRIMARY KEY (name)
+  );
+CREATE TABLE DISPLAY_COLUMN (
+  id integer NOT NULL AUTO_INCREMENT,
+  title VARCHAR(255),
+  propertyname VARCHAR(255),
+  searchable tinyint(4) DEFAULT 0,
+  sortable tinyint(4) DEFAULT 0,
+  israwhtml tinyint(4) DEFAULT 0,
+  hasformat tinyint(4) DEFAULT 0,
+  formatstring VARCHAR(255),
+  
+  PRIMARY KEY (id),
+  
+  templatename VARCHAR(255),
+  FOREIGN KEY (templatename) REFERENCES DISPLAY_TEMPLATE(name) ON DELETE CASCADE
+  );
