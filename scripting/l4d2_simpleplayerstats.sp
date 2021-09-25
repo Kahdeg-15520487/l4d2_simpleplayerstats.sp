@@ -197,53 +197,53 @@ ConVar g_sServerName;
 ConVar g_bShowRankOnConnect;
 ConVar g_bConnectAnnounceEnabled;
 
-char g_sBasicStats[][128] =  {
+char g_sBasicStats[][128] = {
 	
-	STATS_SURVIVOR_DEATH ,
-	STATS_SURVIVOR_INCAPPED ,
-	STATS_SURVIVOR_FRIENDLYFIRE ,
+	STATS_SURVIVOR_DEATH, 
+	STATS_SURVIVOR_INCAPPED, 
+	STATS_SURVIVOR_FRIENDLYFIRE, 
 	
-	STATS_WEAPON_CLASS ,
-	STATS_WEAPON_SPECIAL ,
-	STATS_WEAPON_RIFLE ,
-	STATS_WEAPON_SMG ,
-	STATS_WEAPON_SNIPER ,
-	STATS_WEAPON_SHOTGUN ,
-	STATS_WEAPON_MELEE ,
-	STATS_WEAPON_DEAGLE ,
+	STATS_WEAPON_CLASS, 
+	STATS_WEAPON_SPECIAL, 
+	STATS_WEAPON_RIFLE, 
+	STATS_WEAPON_SMG, 
+	STATS_WEAPON_SNIPER, 
+	STATS_WEAPON_SHOTGUN, 
+	STATS_WEAPON_MELEE, 
+	STATS_WEAPON_DEAGLE, 
 	
-	STATS_INFECTED_KILLED ,
-	STATS_INFECTED_HEADSHOT ,
+	STATS_INFECTED_KILLED, 
+	STATS_INFECTED_HEADSHOT, 
 	
-	STATS_BOOMER_KILLED ,
-	STATS_BOOMER_KILLED_CLEAN ,
+	STATS_BOOMER_KILLED, 
+	STATS_BOOMER_KILLED_CLEAN, 
 	
-	STATS_CHARGER_KILLED ,
-	STATS_CHARGER_PUMMELED ,
+	STATS_CHARGER_KILLED, 
+	STATS_CHARGER_PUMMELED, 
 	
-	STATS_HUNTER_KILLED ,
-	STATS_HUNTER_POUNCED ,
-	STATS_HUNTER_SHOVED ,
+	STATS_HUNTER_KILLED, 
+	STATS_HUNTER_POUNCED, 
+	STATS_HUNTER_SHOVED, 
 	
-	STATS_JOCKEY_KILLED ,
-	STATS_JOCKEY_POUNCED ,
-	STATS_JOCKEY_SHOVED ,
-	STATS_JOCKEY_RIDED ,
+	STATS_JOCKEY_KILLED, 
+	STATS_JOCKEY_POUNCED, 
+	STATS_JOCKEY_SHOVED, 
+	STATS_JOCKEY_RIDED, 
 	
-	STATS_SMOKER_KILLED ,
-	STATS_SMOKER_CHOKED ,
-	STATS_SMOKER_TONGUE_SLASHED ,
+	STATS_SMOKER_KILLED, 
+	STATS_SMOKER_CHOKED, 
+	STATS_SMOKER_TONGUE_SLASHED, 
 	
-	STATS_SPITTER_KILLED ,
+	STATS_SPITTER_KILLED, 
 	
-	STATS_WITCH_KILLED ,
-	STATS_WITCH_KILLED_1SHOT ,
-	STATS_WITCH_HARASSED ,
+	STATS_WITCH_KILLED, 
+	STATS_WITCH_KILLED_1SHOT, 
+	STATS_WITCH_HARASSED, 
 	
-	STATS_TANK_KILLED ,
-	STATS_TANK_MELEE,
+	STATS_TANK_KILLED, 
+	STATS_TANK_MELEE, 
 	
-	STATS_CAR_ALARMED,
+	STATS_CAR_ALARMED, 
 };
 
 public Plugin myinfo = 
@@ -489,8 +489,8 @@ public Action Command_HideExtraFromPublic(int client, int args) {
 		GetCmdArg(1, arg, sizeof(arg));
 		
 		//if (!String_IsNumeric(arg)) {
-			//Notify(client, "Usage: sm_hidestats <1 = Hide, 0 = Unhide>");
-			//return Plugin_Handled;
+		//Notify(client, "Usage: sm_hidestats <1 = Hide, 0 = Unhide>");
+		//return Plugin_Handled;
 		//}
 		
 		char steamId[MAX_STEAMAUTH_LENGTH];
@@ -555,7 +555,7 @@ public Action Command_WipeRank(int client, int args) {
 	if (args == 1) {
 		char arg[255];
 		GetCmdArg(1, arg, sizeof(arg));
-		if(StrEqual(arg,"yes")){
+		if (StrEqual(arg, "yes")) {
 			char steamId[MAX_STEAMAUTH_LENGTH];
 			if (!GetClientAuthId(client, AuthId_Steam2, steamId, sizeof(steamId))) {
 				Notify(client, "Could not process your request at this time. If the issue persists, please contact your administrator (Reason: Invalid Steam ID)");
@@ -597,7 +597,7 @@ void WipePlayerRecord(const char[] steamId, int client = -1) {
 	}
 	
 	//remove last comma
-	strcopy(fields, strlen(fields) , fields);
+	strcopy(fields, strlen(fields), fields);
 	
 	bufferSize *= 2 + 1;
 	char[] query = new char[bufferSize];
@@ -1684,14 +1684,14 @@ public void TQ_ShowExtraStatsPanel(Database db, DBResultSet results, const char[
 			
 			PanelDrawStatItem(panel, "Class");
 			
-//#define STATS_WEAPON_SPECIAL "weapon_special"
-//#define STATS_WEAPON_RIFLE "weapon_rifle"
-//#define STATS_WEAPON_SMG "weapon_smg"
-//#define STATS_WEAPON_SNIPER "weapon_sniper"
-//#define STATS_WEAPON_SHOTGUN "weapon_shotgun"
-//#define STATS_WEAPON_MELEE "weapon_melee"
-//#define STATS_WEAPON_DEAGLE "weapon_deagle"
-
+			//#define STATS_WEAPON_SPECIAL "weapon_special"
+			//#define STATS_WEAPON_RIFLE "weapon_rifle"
+			//#define STATS_WEAPON_SMG "weapon_smg"
+			//#define STATS_WEAPON_SNIPER "weapon_sniper"
+			//#define STATS_WEAPON_SHOTGUN "weapon_shotgun"
+			//#define STATS_WEAPON_MELEE "weapon_melee"
+			//#define STATS_WEAPON_DEAGLE "weapon_deagle"
+			
 			//PanelDrawStat(panel, "Class", STATS_WEAPON_CLASS, map);
 			PanelDrawStatLabelStr(panel, "Class", STATS_WEAPON_CLASS, map);
 			PanelDrawStat(panel, "Rifle kill", STATS_WEAPON_RIFLE, map);
@@ -1871,11 +1871,11 @@ public void ExtractPlayerStats(DBResultSet & results, StringMap & map) {
 	FetchFloatFieldToMap(results, STATS_TOTAL_POINTS, map);
 	FetchIntFieldToMap(results, STATS_RANK, map);
 	
-	FetchIntFieldToMap(results, STATS_SURVIVOR_DEATH , map);
-	FetchIntFieldToMap(results, STATS_SURVIVOR_HEALED , map);
-	FetchIntFieldToMap(results, STATS_SURVIVOR_DEFIBED , map);
-	FetchIntFieldToMap(results, STATS_SURVIVOR_INCAPPED , map);
-	FetchIntFieldToMap(results, STATS_SURVIVOR_FRIENDLYFIRE , map);
+	FetchIntFieldToMap(results, STATS_SURVIVOR_DEATH, map);
+	FetchIntFieldToMap(results, STATS_SURVIVOR_HEALED, map);
+	FetchIntFieldToMap(results, STATS_SURVIVOR_DEFIBED, map);
+	FetchIntFieldToMap(results, STATS_SURVIVOR_INCAPPED, map);
+	FetchIntFieldToMap(results, STATS_SURVIVOR_FRIENDLYFIRE, map);
 	
 	
 	//STATS_WEAPON_CLASS
@@ -1897,69 +1897,69 @@ public void ExtractPlayerStats(DBResultSet & results, StringMap & map) {
 	int smg = GetIntField(results, STATS_WEAPON_SMG);
 	int sniper = GetIntField(results, STATS_WEAPON_SNIPER);
 	
-	if (special > melee && special > deagle && special > rifle && special > shotgun && special > smg && special > sniper ) {
+	if (special > melee && special > deagle && special > rifle && special > shotgun && special > smg && special > sniper) {
 		SetStrFieldToMap("Specialist", STATS_WEAPON_CLASS, map);
 	}
-	else if (melee > special && melee > deagle && melee > rifle && melee > shotgun && melee > smg && melee > sniper ) {
+	else if (melee > special && melee > deagle && melee > rifle && melee > shotgun && melee > smg && melee > sniper) {
 		SetStrFieldToMap("Brawler", STATS_WEAPON_CLASS, map);
 	}
-	else if (deagle > special && deagle > melee && deagle > rifle && deagle > shotgun && deagle > smg && deagle > sniper ) {
+	else if (deagle > special && deagle > melee && deagle > rifle && deagle > shotgun && deagle > smg && deagle > sniper) {
 		SetStrFieldToMap("Cowboy", STATS_WEAPON_CLASS, map);
 	}
-	else if (rifle > special && rifle > melee && rifle > deagle && rifle > shotgun && rifle > smg && rifle > sniper ) {
+	else if (rifle > special && rifle > melee && rifle > deagle && rifle > shotgun && rifle > smg && rifle > sniper) {
 		SetStrFieldToMap("Rifler", STATS_WEAPON_CLASS, map);
 	}
-	else if (shotgun > special && shotgun > melee && shotgun > deagle && shotgun > rifle && shotgun > smg && shotgun > sniper ) {
+	else if (shotgun > special && shotgun > melee && shotgun > deagle && shotgun > rifle && shotgun > smg && shotgun > sniper) {
 		SetStrFieldToMap("Supporter", STATS_WEAPON_CLASS, map);
 	}
-	else if (smg > special && smg > melee && smg > deagle && smg > rifle && smg > shotgun && smg > sniper ) {
+	else if (smg > special && smg > melee && smg > deagle && smg > rifle && smg > shotgun && smg > sniper) {
 		SetStrFieldToMap("Run'n'Gun", STATS_WEAPON_CLASS, map);
 	}
-	else if (sniper > special && sniper > melee && sniper > deagle && sniper > rifle && sniper > shotgun && sniper > smg ) {
+	else if (sniper > special && sniper > melee && sniper > deagle && sniper > rifle && sniper > shotgun && sniper > smg) {
 		SetStrFieldToMap("Markman", STATS_WEAPON_CLASS, map);
 	}
 	else {
 		SetStrFieldToMap("Balancer", STATS_WEAPON_CLASS, map);
 	}
 	
-	FetchIntFieldToMap(results, STATS_WEAPON_SPECIAL , map);
-	FetchIntFieldToMap(results, STATS_WEAPON_RIFLE , map);
-	FetchIntFieldToMap(results, STATS_WEAPON_SMG , map);
-	FetchIntFieldToMap(results, STATS_WEAPON_SNIPER , map);
-	FetchIntFieldToMap(results, STATS_WEAPON_SHOTGUN , map);
-	FetchIntFieldToMap(results, STATS_WEAPON_MELEE , map);
-	FetchIntFieldToMap(results, STATS_WEAPON_DEAGLE , map);
+	FetchIntFieldToMap(results, STATS_WEAPON_SPECIAL, map);
+	FetchIntFieldToMap(results, STATS_WEAPON_RIFLE, map);
+	FetchIntFieldToMap(results, STATS_WEAPON_SMG, map);
+	FetchIntFieldToMap(results, STATS_WEAPON_SNIPER, map);
+	FetchIntFieldToMap(results, STATS_WEAPON_SHOTGUN, map);
+	FetchIntFieldToMap(results, STATS_WEAPON_MELEE, map);
+	FetchIntFieldToMap(results, STATS_WEAPON_DEAGLE, map);
 	
-	FetchIntFieldToMap(results, STATS_INFECTED_KILLED , map);
-	FetchIntFieldToMap(results, STATS_INFECTED_HEADSHOT , map);
+	FetchIntFieldToMap(results, STATS_INFECTED_KILLED, map);
+	FetchIntFieldToMap(results, STATS_INFECTED_HEADSHOT, map);
 	
-	FetchIntFieldToMap(results, STATS_BOOMER_KILLED , map);
-	FetchIntFieldToMap(results, STATS_BOOMER_KILLED_CLEAN , map);
+	FetchIntFieldToMap(results, STATS_BOOMER_KILLED, map);
+	FetchIntFieldToMap(results, STATS_BOOMER_KILLED_CLEAN, map);
 	
-	FetchIntFieldToMap(results, STATS_CHARGER_KILLED , map);
-	FetchIntFieldToMap(results, STATS_CHARGER_PUMMELED , map);
+	FetchIntFieldToMap(results, STATS_CHARGER_KILLED, map);
+	FetchIntFieldToMap(results, STATS_CHARGER_PUMMELED, map);
 	
-	FetchIntFieldToMap(results, STATS_HUNTER_KILLED , map);
-	FetchIntFieldToMap(results, STATS_HUNTER_POUNCED , map);
-	FetchIntFieldToMap(results, STATS_HUNTER_SHOVED , map);
+	FetchIntFieldToMap(results, STATS_HUNTER_KILLED, map);
+	FetchIntFieldToMap(results, STATS_HUNTER_POUNCED, map);
+	FetchIntFieldToMap(results, STATS_HUNTER_SHOVED, map);
 	
-	FetchIntFieldToMap(results, STATS_JOCKEY_KILLED , map);
-	FetchIntFieldToMap(results, STATS_JOCKEY_POUNCED , map);
-	FetchIntFieldToMap(results, STATS_JOCKEY_SHOVED , map);
-	FetchIntFieldToMap(results, STATS_JOCKEY_RIDED , map);
+	FetchIntFieldToMap(results, STATS_JOCKEY_KILLED, map);
+	FetchIntFieldToMap(results, STATS_JOCKEY_POUNCED, map);
+	FetchIntFieldToMap(results, STATS_JOCKEY_SHOVED, map);
+	FetchIntFieldToMap(results, STATS_JOCKEY_RIDED, map);
 	
-	FetchIntFieldToMap(results, STATS_SMOKER_KILLED , map);
-	FetchIntFieldToMap(results, STATS_SMOKER_CHOKED , map);
-	FetchIntFieldToMap(results, STATS_SMOKER_TONGUE_SLASHED , map);
+	FetchIntFieldToMap(results, STATS_SMOKER_KILLED, map);
+	FetchIntFieldToMap(results, STATS_SMOKER_CHOKED, map);
+	FetchIntFieldToMap(results, STATS_SMOKER_TONGUE_SLASHED, map);
 	
-	FetchIntFieldToMap(results, STATS_SPITTER_KILLED , map);
+	FetchIntFieldToMap(results, STATS_SPITTER_KILLED, map);
 	
-	FetchIntFieldToMap(results, STATS_WITCH_KILLED , map);
-	FetchIntFieldToMap(results, STATS_WITCH_KILLED_1SHOT , map);
-	FetchIntFieldToMap(results, STATS_WITCH_HARASSED , map);
+	FetchIntFieldToMap(results, STATS_WITCH_KILLED, map);
+	FetchIntFieldToMap(results, STATS_WITCH_KILLED_1SHOT, map);
+	FetchIntFieldToMap(results, STATS_WITCH_HARASSED, map);
 	
-	FetchIntFieldToMap(results, STATS_TANK_KILLED , map);
-	FetchIntFieldToMap(results, STATS_TANK_MELEE , map);
+	FetchIntFieldToMap(results, STATS_TANK_KILLED, map);
+	FetchIntFieldToMap(results, STATS_TANK_MELEE, map);
 	
 	FetchStrFieldToMap(results, STATS_CREATE_DATE, map);
 }
@@ -2266,7 +2266,7 @@ bool DbConnect(bool force = false)
 	KvSetString(kv, "user", g_SQLUser);
 	KvSetString(kv, "pass", g_SQLPass);
 	g_hDatabase = SQL_ConnectCustom(kv, error, sizeof(error), false);
-
+	
 	if (g_hDatabase != INVALID_HANDLE) {
 		LogMessage("Connected to the database: %s", g_SQLDb);
 		return true;
@@ -2565,7 +2565,7 @@ public Action Event_PlayerIncapped(Event event, const char[] name, bool dontBroa
 	return Plugin_Continue;
 }
 
-public Action Event_CarAlarmed(Event event, const char[] name, bool dontBroadcast){
+public Action Event_CarAlarmed(Event event, const char[] name, bool dontBroadcast) {
 	
 	int alarmerId = event.GetInt("userid");
 	int alarmerClientId = GetClientOfUserId(alarmerId);
@@ -2587,7 +2587,7 @@ public Action Event_CarAlarmed(Event event, const char[] name, bool dontBroadcas
 /**
 * Callback for witch harrass events. Records basic stats only
 */
-public Action Event_WitchHarrassed(Event event,const char[] name, bool dontBroadcast){
+public Action Event_WitchHarrassed(Event event, const char[] name, bool dontBroadcast) {
 	
 	int harrasserId = event.GetInt("userid");
 	int harrasserClientId = GetClientOfUserId(harrasserId);
@@ -2602,7 +2602,7 @@ public Action Event_WitchHarrassed(Event event,const char[] name, bool dontBroad
 		return Plugin_Continue;
 	}
 	
-	if (first){
+	if (first) {
 		UpdateStat(harrasserClientId, STATS_WITCH_HARASSED, 1);
 	}
 	
@@ -2631,7 +2631,7 @@ public Action Event_WitchKilled(Event event, const char[] name, bool dontBroadca
 	GetClientWeapon(attackerClientId, weaponName, 255);
 	
 	UpdateStat(attackerClientId, STATS_WITCH_KILLED, 1);
-	if (oneShot){
+	if (oneShot) {
 		UpdateStat(attackerClientId, STATS_WITCH_KILLED_1SHOT, 1);
 	}
 	UpdateWeaponStat(attackerClientId, weaponName);
@@ -2678,7 +2678,7 @@ public Action Event_BoomerExploded(Event event, const char[] name, bool dontBroa
 	}
 	
 	UpdateStat(attackerClientId, STATS_BOOMER_KILLED, 1);
-	if (clean){
+	if (clean) {
 		UpdateStat(attackerClientId, STATS_BOOMER_KILLED_CLEAN, 1);
 	}
 	
@@ -2835,7 +2835,7 @@ public Action Event_PlayerHurt(Event event, const char[] name, bool dontBroadcas
 	int attackerId = event.GetInt("attacker");
 	int attackerClientId = GetClientOfUserId(attackerId);
 	bool attackerIsBot = event.GetBool("attackerisbot");
-
+	
 	if (IS_VALID_CLIENT(attackerClientId) && !attackerIsBot) {
 		if (!AllowCollectStats())
 			return Plugin_Continue;
@@ -2844,15 +2844,15 @@ public Action Event_PlayerHurt(Event event, const char[] name, bool dontBroadcas
 		if (IS_VALID_SURVIVOR(attackerClientId)) {
 			
 			char victimname[255];
-			event.GetString("victimname",victimname,255);
+			event.GetString("victimname", victimname, 255);
 			
-			if(!StrEqual(victimname,ZC_COMMON,false)){
+			if (!StrEqual(victimname, ZC_COMMON, false)) {
 				int zClass = GetEntProp(victimClientId, Prop_Send, "m_zombieClass");
-	
-				char weaponName[255];
-				event.GetString("weapon",weaponName,255);
 				
-				if (zClass == ZC_TANK && StrEqual(weaponName,"melee",false)){
+				char weaponName[255];
+				event.GetString("weapon", weaponName, 255);
+				
+				if (zClass == ZC_TANK && StrEqual(weaponName, "melee", false)) {
 					Debug("melee tank");
 					UpdateStat(attackerClientId, STATS_TANK_MELEE, 1);
 				}
@@ -2883,15 +2883,15 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 		if (IS_VALID_SURVIVOR(attackerClientId)) {
 			
 			char victimname[255];
-			event.GetString("victimname",victimname,255);
+			event.GetString("victimname", victimname, 255);
 			
-			if(!StrEqual(victimname,ZC_COMMON,false)){
+			if (!StrEqual(victimname, ZC_COMMON, false)) {
 				//int zClass = GetEntProp(victimClientId, Prop_Send, "m_zombieClass");
-			
-				if (StrEqual(victimname,ZC_HUNTER,false)){
+				
+				if (StrEqual(victimname, ZC_HUNTER, false)) {
 					UpdateStat(attackerClientId, STATS_HUNTER_KILLED, 1);
 				}
-				else if (StrEqual(victimname,ZC_SMOKER,false)){
+				else if (StrEqual(victimname, ZC_SMOKER, false)) {
 					UpdateStat(attackerClientId, STATS_SMOKER_KILLED, 1);
 				}
 			}
@@ -2901,7 +2901,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 				}
 				UpdateStat(attackerClientId, STATS_INFECTED_KILLED, 1);
 			}
-
+			
 			char weaponName[255];
 			GetClientWeapon(attackerClientId, weaponName, 255);
 			//Debug(weaponName);
@@ -2915,7 +2915,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 	return Plugin_Continue;
 }
 
-void UpdateWeaponStat(int client, const char[] weaponName){	
+void UpdateWeaponStat(int client, const char[] weaponName) {
 	//#define STATS_WEAPON_SPECIAL "weapon_special"
 	//#define STATS_WEAPON_RIFLE "weapon_rifle"
 	//#define STATS_WEAPON_SMG "weapon_smg"
@@ -2948,7 +2948,7 @@ void UpdateWeaponStat(int client, const char[] weaponName){
 	weapon_autoshotgun
 	weapon_shotgun_spas
 	
-	donot track
+	smg
 	weapon_smg
 	weapon_smg_mp5
 	weapon_smg_silenced
@@ -2961,37 +2961,37 @@ void UpdateWeaponStat(int client, const char[] weaponName){
 	*/
 	
 	//special
-	if (StrEqual(weaponName,"weapon_grenade_launcher") || StrEqual(weaponName,"weapon_rifle_m60")){
+	if (StrEqual(weaponName, "weapon_grenade_launcher") || StrEqual(weaponName, "weapon_rifle_m60")) {
 		UpdateStat(client, STATS_WEAPON_SPECIAL, 1);
 	}
 	
 	//melee
-	if (StrEqual(weaponName,"weapon_chainsaw") || StrEqual(weaponName,"weapon_melee")){
+	if (StrEqual(weaponName, "weapon_chainsaw") || StrEqual(weaponName, "weapon_melee")) {
 		UpdateStat(client, STATS_WEAPON_MELEE, 1);
 	}
 	
 	//deagle
-	if (StrEqual(weaponName,"weapon_pistol_magnum")){
+	if (StrEqual(weaponName, "weapon_pistol_magnum")) {
 		UpdateStat(client, STATS_WEAPON_DEAGLE, 1);
 	}
 	
 	//rifle
-	if (StrEqual(weaponName,"weapon_rifle") || StrEqual(weaponName,"weapon_rifle_ak47") || StrEqual(weaponName,"weapon_rifle_desert") || StrEqual(weaponName,"weapon_rifle_sg552")){
+	if (StrEqual(weaponName, "weapon_rifle") || StrEqual(weaponName, "weapon_rifle_ak47") || StrEqual(weaponName, "weapon_rifle_desert") || StrEqual(weaponName, "weapon_rifle_sg552")) {
 		UpdateStat(client, STATS_WEAPON_RIFLE, 1);
 	}
 	
 	//shotgun
-	if (StrEqual(weaponName,"weapon_pumpshotgun") || StrEqual(weaponName,"weapon_shotgun_chrome") || StrEqual(weaponName,"weapon_autoshotgun") || StrEqual(weaponName,"weapon_shotgun_spas")){
+	if (StrEqual(weaponName, "weapon_pumpshotgun") || StrEqual(weaponName, "weapon_shotgun_chrome") || StrEqual(weaponName, "weapon_autoshotgun") || StrEqual(weaponName, "weapon_shotgun_spas")) {
 		UpdateStat(client, STATS_WEAPON_SHOTGUN, 1);
 	}
 	
 	//smg
-	if (StrEqual(weaponName,"weapon_smg") || StrEqual(weaponName,"weapon_smg_mp5") || StrEqual(weaponName,"weapon_smg_silenced")){
+	if (StrEqual(weaponName, "weapon_smg") || StrEqual(weaponName, "weapon_smg_mp5") || StrEqual(weaponName, "weapon_smg_silenced")) {
 		UpdateStat(client, STATS_WEAPON_SMG, 1);
 	}
 	
 	//sniper
-	if (StrEqual(weaponName,"weapon_sniper_awp") || StrEqual(weaponName,"weapon_sniper_military") || StrEqual(weaponName,"weapon_sniper_scout") || StrEqual(weaponName,"weapon_hunting_rifle")){
+	if (StrEqual(weaponName, "weapon_sniper_awp") || StrEqual(weaponName, "weapon_sniper_military") || StrEqual(weaponName, "weapon_sniper_scout") || StrEqual(weaponName, "weapon_hunting_rifle")) {
 		UpdateStat(client, STATS_WEAPON_SNIPER, 1);
 	}
 }
@@ -3211,7 +3211,7 @@ public void Error(const char[] format, any...)
 	
 	//Display error messages to root admins if debug is enabled
 	for (int i = 1; i <= MAX_CLIENTS; i++) {
-		if (IS_VALID_HUMAN(i)  && Client_HasAdminFlags(i, ADMFLAG_ROOT)) {
+		if (IS_VALID_HUMAN(i) && Client_HasAdminFlags(i, ADMFLAG_ROOT)) {
 			PrintToConsole(i, debugMessage);
 			if (!DebugEnabled())
 				continue;
@@ -3239,7 +3239,7 @@ public void Notify(int client, const char[] format, any...)
 	} else if (client > 0 && IS_VALID_HUMAN(client)) {
 		Format(debugMessage, len, "{N}[{L}%s{N}] {O}%s", DEFAULT_PLUGIN_TAG, formattedString);
 		//Client_PrintToChat(client, true, "%s", debugMessage);
-		PrintToChat(client,"%s", debugMessage);
+		PrintToChat(client, "%s", debugMessage);
 	} else {
 		return;
 	}
@@ -3248,7 +3248,7 @@ public void Notify(int client, const char[] format, any...)
 	
 	//Display info messages to root admins
 	for (int i = 1; i <= MAX_CLIENTS; i++) {
-		if (IS_VALID_HUMAN(i)  && Client_HasAdminFlags(i, ADMFLAG_ROOT)) {
+		if (IS_VALID_HUMAN(i) && Client_HasAdminFlags(i, ADMFLAG_ROOT)) {
 			PrintToConsole(i, debugMessage);
 		}
 	}
@@ -3272,7 +3272,7 @@ public void Info(const char[] format, any...)
 	
 	//Display info messages to root admins
 	for (int i = 1; i <= MAX_CLIENTS; i++) {
-		if (IS_VALID_HUMAN(i)  && Client_HasAdminFlags(i, ADMFLAG_ROOT)) {
+		if (IS_VALID_HUMAN(i) && Client_HasAdminFlags(i, ADMFLAG_ROOT)) {
 			PrintToConsole(i, debugMessage);
 		}
 	}
@@ -3301,11 +3301,11 @@ public void Debug(const char[] format, any...)
 	
 	//Display debug messages to root admins
 	for (int i = 1; i <= MAX_CLIENTS; i++) {
-		if (IS_VALID_HUMAN(i)  && Client_HasAdminFlags(i, ADMFLAG_ROOT))
+		if (IS_VALID_HUMAN(i) && Client_HasAdminFlags(i, ADMFLAG_ROOT))
 			PrintToConsole(i, debugMessage);
 	}
 	#endif
-} 
+}
 
 
 
@@ -3318,22 +3318,22 @@ public void Debug(const char[] format, any...)
  */
 public bool String_IsNumeric(const char[] str)
 {
-	int x=0;
-	int dotsFound=0;
-	int numbersFound=0;
-
+	int x = 0;
+	int dotsFound = 0;
+	int numbersFound = 0;
+	
 	if (str[x] == '+' || str[x] == '-') {
 		x++;
 	}
-
+	
 	while (str[x] != '\0') {
-
+		
 		if (IsCharNumeric(str[x])) {
 			numbersFound++;
 		}
 		else if (str[x] == '.') {
 			dotsFound++;
-
+			
 			if (dotsFound > 1) {
 				return false;
 			}
@@ -3341,14 +3341,14 @@ public bool String_IsNumeric(const char[] str)
 		else {
 			return false;
 		}
-
+		
 		x++;
 	}
-
+	
 	if (!numbersFound) {
 		return false;
 	}
-
+	
 	return true;
 }
 
@@ -3364,14 +3364,14 @@ public bool String_StartsWith(const char[] str, const char[] subString)
 {
 	int n = 0;
 	while (subString[n] != '\0') {
-
+		
 		if (str[n] == '\0' || str[n] != subString[n]) {
 			return false;
 		}
-
+		
 		n++;
 	}
-
+	
 	return true;
 }
 
@@ -3384,11 +3384,11 @@ public bool String_StartsWith(const char[] str, const char[] subString)
 public bool Client_IsAdmin(int client)
 {
 	AdminId adminId = GetUserAdmin(client);
-
+	
 	if (adminId == INVALID_ADMIN_ID) {
 		return false;
 	}
-
+	
 	return GetAdminFlag(adminId, Admin_Generic);
 }
 
@@ -3401,11 +3401,11 @@ public bool Client_IsAdmin(int client)
 bool Client_HasAdminFlags(int client, int flags = ADMFLAG_GENERIC)
 {
 	AdminId adminId = GetUserAdmin(client);
-
+	
 	if (adminId == INVALID_ADMIN_ID) {
 		return false;
 	}
-
+	
 	return (GetAdminFlags(adminId, Access_Effective) & flags);
 }
 
@@ -3419,17 +3419,17 @@ bool Client_HasAdminFlags(int client, int flags = ADMFLAG_GENERIC)
 public int Client_FindBySteamId(const char[] auth)
 {
 	char clientAuth[MAX_STEAMAUTH_LENGTH];
-	for (int client=1; client <= MaxClients; client++) {
+	for (int client = 1; client <= MaxClients; client++) {
 		if (!IsClientAuthorized(client)) {
 			continue;
 		}
-
+		
 		GetClientAuthId(client, AuthId_Steam2, clientAuth, sizeof(clientAuth));
-
+		
 		if (StrEqual(auth, clientAuth)) {
 			return client;
 		}
 	}
-
+	
 	return -1;
 }
