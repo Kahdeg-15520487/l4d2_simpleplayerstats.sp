@@ -280,6 +280,7 @@ public void OnPluginStart()
 	g_iStatsDisplayType = CreateConVar("pstats_display_type", "2", "1 = Display points, 2 = Display the quantity, 3 = Both points and quantity", _, true, 1.0, true, 3.0);
 	g_bShowRankOnConnect = CreateConVar("pstats_show_rank_onjoin", "0", "If set, player rank will be displayed to the user on every map change", _, true, 0.0, true, 1.0);
 	g_bConnectAnnounceEnabled = CreateConVar("pstats_cannounce_enabled", "0", "If set, connect announce will be displayed to chat when a player joins", _, true, 0.0, true, 1.0);
+	AutoExecConfig(true, "l4d2_simpleplayerstats");
 	
 	g_sServerName = FindConVar("hostname");
 	g_mStatModifiers = new StringMap();
