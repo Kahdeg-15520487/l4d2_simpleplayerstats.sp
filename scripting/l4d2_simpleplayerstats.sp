@@ -45,7 +45,7 @@
 #define DEBUG
 
 #define PLUGIN_AUTHOR "tank cat"
-#define PLUGIN_VERSION "1.0.0"
+#define PLUGIN_VERSION "1.4.0"
 
 #define TEAM_SPECTATOR          1
 #define TEAM_SURVIVOR           2
@@ -89,6 +89,7 @@
 #define STATS_TOTAL_POINTS "total_points"
 
 //Player in-game statistics
+#define STATS_SURVIVOR_REVIVED "survivor_revived"
 #define STATS_SURVIVOR_HEALED "survivor_healed"
 #define STATS_SURVIVOR_DEFIBED "survivor_defibed"
 #define STATS_SURVIVOR_DEATH "survivor_death"
@@ -200,6 +201,9 @@ ConVar g_bConnectAnnounceEnabled;
 char g_sBasicStats[][128] = {
 	
 	STATS_SURVIVOR_DEATH, 
+	STATS_SURVIVOR_HEALED,
+	STATS_SURVIVOR_DEFIBED,
+	STATS_SURVIVOR_REVIVED,
 	STATS_SURVIVOR_INCAPPED, 
 	STATS_SURVIVOR_FRIENDLYFIRE, 
 	
@@ -252,7 +256,7 @@ public Plugin myinfo =
 	author = PLUGIN_AUTHOR, 
 	description = "Tracks kills, deaths and other special skills", 
 	version = PLUGIN_VERSION, 
-	url = "https://github.com/sourcemod-plugins/l4d2-player-stats"
+	url = "https://github.com/Kahdeg-15520487/l4d2_simpleplayerstats.sp"
 };
 
 /**
@@ -304,6 +308,9 @@ public void OnPluginStart()
 	//HookEvent("infected_death", Event_InfectedDeath, EventHookMode_Post);
 	HookEvent("player_hurt", Event_PlayerHurt, EventHookMode_Post);
 	HookEvent("player_incapacitated", Event_PlayerIncapped, EventHookMode_Post);
+	HookEvent("heal_success", Event_HealSuccess, EventHookMode_Post);
+	HookEvent("defibrillator_used", Event_DefibSuccess, EventHookMode_Post);
+	HookEvent("revive_success", Event_ReviveSuccess, EventHookMode_Post);
 	HookEvent("friendly_fire", Event_FriendlyFire, EventHookMode_Post);
 	
 	HookEvent("round_start", Event_OnRoundStart, EventHookMode_PostNoCopy);
@@ -318,6 +325,9 @@ public void OnPluginStart()
 	HookEvent("spitter_killed", Event_SpitterKilled, EventHookMode_Post);
 	HookEvent("witch_killed", Event_WitchKilled, EventHookMode_Post);
 	HookEvent("tank_killed", Event_TankKilled, EventHookMode_Post);
+	
+	HookEvent("pounce_stopped", Event_HunterShoved, EventHookMode_Post);
+	HookEvent("jockey_ride_end", Event_JockeyShoved, EventHookMode_Post);
 	
 	HookEvent("witch_harasser_set", Event_WitchHarrassed, EventHookMode_Post);
 	
@@ -1513,6 +1523,9 @@ public void TQ_ShowPlayerRankPanel(Database db, DBResultSet results, const char[
 			PanelDrawStatItem(panel, "Stat");
 			
 			PanelDrawStat(panel, "Death", STATS_SURVIVOR_DEATH, map);
+			PanelDrawStat(panel, "Revived", STATS_SURVIVOR_REVIVED, map);
+			PanelDrawStat(panel, "Healed", STATS_SURVIVOR_HEALED, map);
+			PanelDrawStat(panel, "Defibed", STATS_SURVIVOR_DEFIBED, map);
 			PanelDrawStatLabelStr(panel, "Class", STATS_WEAPON_CLASS, map);
 			//TODO
 			//PanelDrawStatLabelStr(panel, "Title", STATS_SURVIVOR_TITLE, map);
@@ -1873,6 +1886,7 @@ public void ExtractPlayerStats(DBResultSet & results, StringMap & map) {
 	FetchIntFieldToMap(results, STATS_RANK, map);
 	
 	FetchIntFieldToMap(results, STATS_SURVIVOR_DEATH, map);
+	FetchIntFieldToMap(results, STATS_SURVIVOR_REVIVED, map);
 	FetchIntFieldToMap(results, STATS_SURVIVOR_HEALED, map);
 	FetchIntFieldToMap(results, STATS_SURVIVOR_DEFIBED, map);
 	FetchIntFieldToMap(results, STATS_SURVIVOR_INCAPPED, map);
@@ -2566,6 +2580,47 @@ public Action Event_PlayerIncapped(Event event, const char[] name, bool dontBroa
 	return Plugin_Continue;
 }
 
+public Action Event_HunterShoved(Event event, const char[] name, bool dontBroadcast) {
+	
+	int shoverId = event.GetInt("userid");
+	int shoverClientId = GetClientOfUserId(shoverId);
+	
+	//We will only process valid human survivor players
+	if (!IS_HUMAN_SURVIVOR(shoverClientId)) {
+		return Plugin_Continue;
+	}
+	
+	if (!AllowCollectStats()) {
+		return Plugin_Continue;
+	}
+	
+	UpdateStat(shoverClientId, STATS_HUNTER_SHOVED, 1);
+	
+	return Plugin_Continue;
+}
+
+public Action Event_JockeyShoved(Event event, const char[] name, bool dontBroadcast) {
+	
+	int shoverId = event.GetInt("rescuer");
+	int shoverClientId = GetClientOfUserId(shoverId);
+	float duration = event.GetFloat("ride_length");
+	//PrintToChatAll("%d | %f", shoverId, duration);
+	
+	//We will only process valid human survivor players
+	if (!IS_HUMAN_SURVIVOR(shoverClientId)) {
+		return Plugin_Continue;
+	}
+	
+	if (!AllowCollectStats()) {
+		return Plugin_Continue;
+	}
+	PrintToChatAll("jockey reg");
+	UpdateStat(shoverClientId, STATS_JOCKEY_SHOVED, 1);
+	UpdateStat(shoverClientId, STATS_JOCKEY_RIDED, RoundFloat(duration));
+	
+	return Plugin_Continue;
+}
+
 public Action Event_CarAlarmed(Event event, const char[] name, bool dontBroadcast) {
 	
 	int alarmerId = event.GetInt("userid");
@@ -2812,6 +2867,60 @@ public Action Event_InfectedDeath(Event event, const char[] name, bool dontBroad
 	return Plugin_Continue;
 }
 
+public Action Event_ReviveSuccess(Event event, const char[] name, bool dontBroadcast) {
+	int healerId = event.GetInt("userid");
+	int healerClientId = GetClientOfUserId(healerId);
+	
+	//We will only process valid human survivor players
+	if (!IS_HUMAN_SURVIVOR(healerClientId)) {
+		return Plugin_Continue;
+	}
+	
+	if (!AllowCollectStats()) {
+		return Plugin_Continue;
+	}
+	
+	UpdateStat(healerClientId, STATS_SURVIVOR_REVIVED, 1);
+	
+	return Plugin_Continue;
+}
+
+public Action Event_DefibSuccess(Event event, const char[] name, bool dontBroadcast) {
+	int healerId = event.GetInt("userid");
+	int healerClientId = GetClientOfUserId(healerId);
+	
+	//We will only process valid human survivor players
+	if (!IS_HUMAN_SURVIVOR(healerClientId)) {
+		return Plugin_Continue;
+	}
+	
+	if (!AllowCollectStats()) {
+		return Plugin_Continue;
+	}
+	
+	UpdateStat(healerClientId, STATS_SURVIVOR_DEFIBED, 1);
+	
+	return Plugin_Continue;
+}
+
+public Action Event_HealSuccess(Event event, const char[] name, bool dontBroadcast) {
+	int healerId = event.GetInt("userid");
+	int healerClientId = GetClientOfUserId(healerId);
+	
+	//We will only process valid human survivor players
+	if (!IS_HUMAN_SURVIVOR(healerClientId)) {
+		return Plugin_Continue;
+	}
+	
+	if (!AllowCollectStats()) {
+		return Plugin_Continue;
+	}
+	
+	UpdateStat(healerClientId, STATS_SURVIVOR_HEALED, 1);
+	
+	return Plugin_Continue;
+}
+
 public Action Event_FriendlyFire(Event event, const char[] name, bool dontBroadcast) {
 	int attackerId = event.GetInt("guilty");
 	int attackerClientId = GetClientOfUserId(attackerId);
@@ -3046,6 +3155,8 @@ void UpdateStat(int client, const char[] column, int amount = 1, int victim = -1
 	pack.WriteCell(victim);
 	
 	g_hDatabase.Query(TQ_UpdateStat, query, pack);
+	
+	//PrintToChatAll("%s stat %s", qName, qColumnName);
 	
 	//ShowPlayerRankPanel(client, steamId);
 }

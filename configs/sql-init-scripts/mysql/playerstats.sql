@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS `STATS_PLAYERS` (
 	`last_known_alias_unicode` varchar(255) DEFAULT NULL,
 	`last_join_date` timestamp NULL DEFAULT current_timestamp(),
 	`hide_extra_stats` tinyint(4) DEFAULT 0,
+	`survivor_revived` int(10) unsigned NOT NULL DEFAULT 0,
 	`survivor_healed` int(10) unsigned NOT NULL DEFAULT 0,
 	`survivor_defibed` int(10) unsigned NOT NULL DEFAULT 0,
 	`survivor_death` int(10) unsigned NOT NULL DEFAULT 0,
@@ -89,6 +90,7 @@ SELECT `b`.`steam_id` AS `steam_id`,
 	   `b`.`last_known_alias_unicode` AS `last_known_alias_unicode`,
        date_format(`b`.`last_join_date`, '%Y-%m-%d %h:%i:%s %p') AS `last_join_date`,
 
+		`b`.`survivor_revived` as `survivor_revived`,
 		`b`.`survivor_healed` as `survivor_healed`,
 		`b`.`survivor_defibed` as `survivor_defibed`,
 		`b`.`survivor_death` as `survivor_death`,
@@ -146,6 +148,7 @@ FROM
 			`s`.`last_known_alias_unicode` AS `last_known_alias_unicode`,
 			`s`.`last_join_date` AS `last_join_date`,
 
+			`s`.`survivor_revived` as `survivor_revived`,
 			`s`.`survivor_healed` as `survivor_healed`,
 			`s`.`survivor_defibed` as `survivor_defibed`,
 			`s`.`survivor_death` as `survivor_death`,
@@ -192,7 +195,10 @@ FROM
 			`s`.`tank_melee` as `tank_melee`,
 			`s`.`car_alarm` as `car_alarm`,
 		  
-          `APPLY_MODIFIER`('survivor_healed', `s`.`survivor_healed`)
+          `APPLY_MODIFIER`('survivor_revived', `s`.`survivor_healed`)
+		+ `APPLY_MODIFIER`('survivor_healed', `s`.`survivor_healed`)
+		+ `APPLY_MODIFIER`('survivor_defibed', `s`.`survivor_healed`)
+		+ `APPLY_MODIFIER`('survivor_ff', `s`.`survivor_ff`)
 		- `APPLY_MODIFIER`('survivor_death', `s`.`survivor_death`)
 		+ `APPLY_MODIFIER`('infected_killed', `s`.`infected_killed`)
 		+ `APPLY_MODIFIER`('infected_headshot', `s`.`infected_headshot`)
@@ -230,6 +236,7 @@ CREATE TABLE DISPLAY_COLUMN (
   searchable tinyint(4) DEFAULT 0,
   sortable tinyint(4) DEFAULT 0,
   israwhtml tinyint(4) DEFAULT 0,
+  isdatetime tinyint(4) DEFAULT 0,
   hasformat tinyint(4) DEFAULT 0,
   formatstring VARCHAR(255),
   
