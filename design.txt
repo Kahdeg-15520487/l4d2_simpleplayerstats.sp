@@ -1,0 +1,74 @@
+
+player
+	heal
+		heal_success
+	defib
+		defibrillator_used
+	death
+		player_death -> attacker is infected && victim is survivor
+	incap
+		player_incapacitated_start
+	friendly fire
+		friendly_fire
+	
+	//weapon stat
+		player_death -> attacker is survivor && victim is infected && weapon is <TYPE>
+	rifle kill
+	shotgun kill
+	melee kill
+	deagle kill
+
+common infected
+	killed
+		player_death -> attacker is survivor && victim is infected
+	headshot
+		player_death -> attacker is survivor && victim is infected && isHeadshot
+	
+special infected
+	boomer
+		killed
+			boomer_killed
+		exploded without getting bile
+	charger
+		killed
+			charger_killed
+		get plummelled
+			charger_pummel_start
+	hunter
+		killed
+			hunter_killed
+		get pounced
+			lunge_pounce
+		shove pounced
+			pounce_stopped
+	jockey
+		killed
+			jockey_killed
+		get pounced
+			jockey_ride
+		shove pounced
+			jockey_ride_end
+		total time rided
+			jockey_ride_end -> ride_length
+	smoker
+		killed
+			smoker_killed
+		get choked
+			choke_start
+		tongue slashed
+			tongue_pull_stopped -> release_type is CUT_KILL
+	spitter
+		killed
+			spitter_killed
+	witch
+		killed
+			witch_killed
+		one shot
+			witch_killed -> oneshot
+		witch harassed
+			witch_harasser_set -> first
+	tank
+		killed
+			tank_killed
+		melee hit
+			player_hurt -> attacker is survivor && weapon is melee

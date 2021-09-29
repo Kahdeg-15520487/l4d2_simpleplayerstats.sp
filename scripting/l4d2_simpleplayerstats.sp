@@ -201,9 +201,9 @@ ConVar g_bConnectAnnounceEnabled;
 char g_sBasicStats[][128] = {
 	
 	STATS_SURVIVOR_DEATH, 
-	STATS_SURVIVOR_HEALED,
-	STATS_SURVIVOR_DEFIBED,
-	STATS_SURVIVOR_REVIVED,
+	STATS_SURVIVOR_HEALED, 
+	STATS_SURVIVOR_DEFIBED, 
+	STATS_SURVIVOR_REVIVED, 
 	STATS_SURVIVOR_INCAPPED, 
 	STATS_SURVIVOR_FRIENDLYFIRE, 
 	
@@ -902,6 +902,27 @@ public int GetStatModifierCount() {
 			Debug("Got total stat modifier count in table: %i", count);
 		}
 		delete query;
+		
+		query = SQL_Query(g_hDatabase, "SELECT * FROM STATS_SKILLS");
+		if (query == null) {
+			char error[255];
+			SQL_GetError(g_hDatabase, error, sizeof(error));
+			Error("GetStatModifierCount :: Failed to query table count (Reason: %s)", error);
+			return -1;
+		}
+		else {
+			while (query.FetchRow()) {
+				int nameFieldId = -1;
+				int modFieldId = -1;
+				if (query.FieldNameToNum("name", nameFieldId) && nameFieldId >= 0
+					 && query.FieldNameToNum("modifier", modFieldId) && modFieldId >= 0) {
+					char name[255];
+					query.FetchString(nameFieldId, name, 255);
+					float mod = query.FetchFloat(modFieldId);
+					g_mStatModifiers.SetValue(name, mod);
+				}
+			}
+		}
 	}
 	return count;
 }
