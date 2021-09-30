@@ -45,7 +45,7 @@
 #define DEBUG
 
 #define PLUGIN_AUTHOR "tank cat"
-#define PLUGIN_VERSION "1.4.0"
+#define PLUGIN_VERSION "1.4.1"
 
 #define TEAM_SPECTATOR          1
 #define TEAM_SURVIVOR           2
@@ -2635,7 +2635,7 @@ public Action Event_JockeyShoved(Event event, const char[] name, bool dontBroadc
 	if (!AllowCollectStats()) {
 		return Plugin_Continue;
 	}
-	PrintToChatAll("jockey reg");
+	//PrintToChatAll("jockey reg");
 	UpdateStat(shoverClientId, STATS_JOCKEY_SHOVED, 1);
 	UpdateStat(shoverClientId, STATS_JOCKEY_RIDED, RoundFloat(duration));
 	
