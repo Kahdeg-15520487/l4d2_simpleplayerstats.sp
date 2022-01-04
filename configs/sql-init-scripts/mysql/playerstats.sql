@@ -83,146 +83,214 @@ CREATE TABLE IF NOT EXISTS `STATS_SKILLS` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE VIEW `STATS_VW_PLAYER_RANKS` AS
-SELECT `b`.`steam_id` AS `steam_id`,
-	   `b`.`steam_id64` AS `steam_id64`,
-	   `b`.`play_style` AS `play_style`,
-       `b`.`last_known_alias` AS `last_known_alias`,
-	   `b`.`last_known_alias_unicode` AS `last_known_alias_unicode`,
-       date_format(`b`.`last_join_date`, '%Y-%m-%d %h:%i:%s %p') AS `last_join_date`,
-
-		`b`.`survivor_revived` as `survivor_revived`,
-		`b`.`survivor_healed` as `survivor_healed`,
-		`b`.`survivor_defibed` as `survivor_defibed`,
-		`b`.`survivor_death` as `survivor_death`,
-		`b`.`survivor_incapped` as `survivor_incapped`,
-		`b`.`survivor_ff` as `survivor_ff`,
-
-		`b`.`weapon_rifle` as `weapon_rifle`,
-		`b`.`weapon_shotgun` as `weapon_shotgun`,
-		`b`.`weapon_melee` as `weapon_melee`,
-		`b`.`weapon_deagle` as `weapon_deagle`,
-		`b`.`weapon_special` as `weapon_special`,
-		`b`.`weapon_smg` as `weapon_smg`,
-		`b`.`weapon_sniper` as `weapon_sniper`,
-
-		`b`.`infected_killed` as `infected_killed`,
-		`b`.`infected_headshot` as `infected_headshot`,
-
-		`b`.`boomer_killed` as `boomer_killed`,
-		`b`.`boomer_killed_clean` as `boomer_killed_clean`,
-
-		`b`.`charger_killed` as `charger_killed`,
-		`b`.`charger_pummeled` as `charger_pummeled`,
-
-		`b`.`hunter_killed` as `hunter_killed`,
-		`b`.`hunter_pounced` as `hunter_pounced`,
-		`b`.`hunter_shoved` as `hunter_shoved`,
-
-		`b`.`jockey_killed` as `jockey_killed`,
-		`b`.`jockey_pounced` as `jockey_pounced`,
-		`b`.`jockey_shoved` as `jockey_shoved`,
-		`b`.`jockey_rided` as `jockey_rided`,
-
-		`b`.`smoker_killed` as `smoker_killed`,
-		`b`.`smoker_choked` as `smoker_choked`,
-		`b`.`smoker_tongue_slashed` as `smoker_tongue_slashed`,
-
-		`b`.`spitter_killed` as `spitter_killed`,
-
-		`b`.`witch_killed` as `witch_killed`,
-		`b`.`witch_killed_1shot` as `witch_killed_1shot`,
-		`b`.`witch_harassed` as `witch_harassed`,
-
-		`b`.`tank_killed` as `tank_killed`,
-		`b`.`tank_melee` as `tank_melee`,
-		`b`.`car_alarm` as `car_alarm`,
-		
-       round(`b`.`total_points`, 2) AS `total_points`,
-       `b`.`rank_num` AS `rank_num`,
-       date_format(`b`.`create_date`, '%Y-%m-%d %h:%i:%s %p') AS `create_date`
+SELECT
+    `b`.`steam_id` AS `steam_id`,
+    `b`.`steam_id64` AS `steam_id64`,
+    `b`.`play_style` AS `play_style`,
+    `b`.`last_known_alias` AS `last_known_alias`,
+    `b`.`last_known_alias_unicode` AS `last_known_alias_unicode`,
+    DATE_FORMAT(
+        `b`.`last_join_date`,
+        '%Y-%m-%d %h:%i:%s %p'
+    ) AS `last_join_date`,
+    `b`.`survivor_revived` AS `survivor_revived`,
+    `b`.`survivor_healed` AS `survivor_healed`,
+    `b`.`survivor_defibed` AS `survivor_defibed`,
+    `b`.`survivor_death` AS `survivor_death`,
+    `b`.`survivor_incapped` AS `survivor_incapped`,
+    `b`.`survivor_ff` AS `survivor_ff`,
+    `b`.`weapon_rifle` AS `weapon_rifle`,
+    `b`.`weapon_shotgun` AS `weapon_shotgun`,
+    `b`.`weapon_melee` AS `weapon_melee`,
+    `b`.`weapon_deagle` AS `weapon_deagle`,
+    `b`.`weapon_special` AS `weapon_special`,
+    `b`.`weapon_smg` AS `weapon_smg`,
+    `b`.`weapon_sniper` AS `weapon_sniper`,
+    `b`.`infected_killed` AS `infected_killed`,
+    `b`.`infected_headshot` AS `infected_headshot`,
+    `b`.`boomer_killed` AS `boomer_killed`,
+    `b`.`boomer_killed_clean` AS `boomer_killed_clean`,
+    `b`.`charger_killed` AS `charger_killed`,
+    `b`.`charger_pummeled` AS `charger_pummeled`,
+    `b`.`hunter_killed` AS `hunter_killed`,
+    `b`.`hunter_pounced` AS `hunter_pounced`,
+    `b`.`hunter_shoved` AS `hunter_shoved`,
+    `b`.`jockey_killed` AS `jockey_killed`,
+    `b`.`jockey_pounced` AS `jockey_pounced`,
+    `b`.`jockey_shoved` AS `jockey_shoved`,
+    `b`.`jockey_rided` AS `jockey_rided`,
+    `b`.`smoker_killed` AS `smoker_killed`,
+    `b`.`smoker_choked` AS `smoker_choked`,
+    `b`.`smoker_tongue_slashed` AS `smoker_tongue_slashed`,
+    `b`.`spitter_killed` AS `spitter_killed`,
+    `b`.`witch_killed` AS `witch_killed`,
+    `b`.`witch_killed_1shot` AS `witch_killed_1shot`,
+    `b`.`witch_harassed` AS `witch_harassed`,
+    `b`.`tank_killed` AS `tank_killed`,
+    `b`.`tank_melee` AS `tank_melee`,
+    `b`.`car_alarm` AS `car_alarm`,
+    ROUND(`b`.`total_points`, 2) AS `total_points`,
+    `b`.`rank_num` AS `rank_num`,
+    DATE_FORMAT(
+        `b`.`create_date`,
+        '%Y-%m-%d %h:%i:%s %p'
+    ) AS `create_date`
 FROM
-  (SELECT	`s`.`steam_id` AS `steam_id`,
-			`s`.`steam_id64` AS `steam_id64`,
-			`s`.`play_style` AS `play_style`,
-			`s`.`last_known_alias` AS `last_known_alias`,
-			`s`.`last_known_alias_unicode` AS `last_known_alias_unicode`,
-			`s`.`last_join_date` AS `last_join_date`,
-
-			`s`.`survivor_revived` as `survivor_revived`,
-			`s`.`survivor_healed` as `survivor_healed`,
-			`s`.`survivor_defibed` as `survivor_defibed`,
-			`s`.`survivor_death` as `survivor_death`,
-			`s`.`survivor_incapped` as `survivor_incapped`,
-			`s`.`survivor_ff` as `survivor_ff`,
-
-			`s`.`weapon_rifle` as `weapon_rifle`,
-			`s`.`weapon_shotgun` as `weapon_shotgun`,
-			`s`.`weapon_melee` as `weapon_melee`,
-			`s`.`weapon_deagle` as `weapon_deagle`,
-			`s`.`weapon_special` as `weapon_special`,
-			`s`.`weapon_smg` as `weapon_smg`,
-			`s`.`weapon_sniper` as `weapon_sniper`,
-
-			`s`.`infected_killed` as `infected_killed`,
-			`s`.`infected_headshot` as `infected_headshot`,
-
-			`s`.`boomer_killed` as `boomer_killed`,
-			`s`.`boomer_killed_clean` as `boomer_killed_clean`,
-
-			`s`.`charger_killed` as `charger_killed`,
-			`s`.`charger_pummeled` as `charger_pummeled`,
-
-			`s`.`hunter_killed` as `hunter_killed`,
-			`s`.`hunter_pounced` as `hunter_pounced`,
-			`s`.`hunter_shoved` as `hunter_shoved`,
-
-			`s`.`jockey_killed` as `jockey_killed`,
-			`s`.`jockey_pounced` as `jockey_pounced`,
-			`s`.`jockey_shoved` as `jockey_shoved`,
-			`s`.`jockey_rided` as `jockey_rided`,
-
-			`s`.`smoker_killed` as `smoker_killed`,
-			`s`.`smoker_choked` as `smoker_choked`,
-			`s`.`smoker_tongue_slashed` as `smoker_tongue_slashed`,
-
-			`s`.`spitter_killed` as `spitter_killed`,
-
-			`s`.`witch_killed` as `witch_killed`,
-			`s`.`witch_killed_1shot` as `witch_killed_1shot`,
-			`s`.`witch_harassed` as `witch_harassed`,
-
-			`s`.`tank_killed` as `tank_killed`,
-			`s`.`tank_melee` as `tank_melee`,
-			`s`.`car_alarm` as `car_alarm`,
-		  
-          `APPLY_MODIFIER`('survivor_revived', `s`.`survivor_healed`)
-		+ `APPLY_MODIFIER`('survivor_healed', `s`.`survivor_healed`)
-		+ `APPLY_MODIFIER`('survivor_defibed', `s`.`survivor_healed`)
-		+ `APPLY_MODIFIER`('survivor_ff', `s`.`survivor_ff`)
-		- `APPLY_MODIFIER`('survivor_death', `s`.`survivor_death`)
-		+ `APPLY_MODIFIER`('infected_killed', `s`.`infected_killed`)
-		+ `APPLY_MODIFIER`('infected_headshot', `s`.`infected_headshot`)
-		+ `APPLY_MODIFIER`('boomer_killed', `s`.`boomer_killed`)
-		+ `APPLY_MODIFIER`('charger_killed', `s`.`charger_killed`)
-		+ `APPLY_MODIFIER`('hunter_killed', `s`.`hunter_killed`)
-		+ `APPLY_MODIFIER`('jockey_killed', `s`.`jockey_killed`)
-		+ `APPLY_MODIFIER`('spitter_killed', `s`.`spitter_killed`)
-		+ `APPLY_MODIFIER`('witch_killed', `s`.`witch_killed`)
-		+ `APPLY_MODIFIER`('tank_killed', `s`.`tank_killed`)
-			AS `total_points`,
-          row_number() OVER ( ORDER BY 	  `s`.`survivor_healed`
-										- `s`.`survivor_death`
-										+ `s`.`infected_headshot`
-										+ `s`.`infected_killed`
-										+ `s`.`boomer_killed`
-										+ `s`.`charger_killed`
-										+ `s`.`hunter_killed`
-										+ `s`.`jockey_killed`
-										+ `s`.`spitter_killed`
-										+ `s`.`witch_killed`
-										+ `s`.`tank_killed` DESC,`s`.`create_date`) AS `rank_num`,
-          `s`.`create_date` AS `create_date`
-   FROM `STATS_PLAYERS` `s`) `b`;
+    (
+    SELECT
+        `s`.`steam_id` AS `steam_id`,
+        `s`.`steam_id64` AS `steam_id64`,
+        `s`.`play_style` AS `play_style`,
+        `s`.`last_known_alias` AS `last_known_alias`,
+        `s`.`last_known_alias_unicode` AS `last_known_alias_unicode`,
+        `s`.`last_join_date` AS `last_join_date`,
+        `s`.`survivor_revived` AS `survivor_revived`,
+        `s`.`survivor_healed` AS `survivor_healed`,
+        `s`.`survivor_defibed` AS `survivor_defibed`,
+        `s`.`survivor_death` AS `survivor_death`,
+        `s`.`survivor_incapped` AS `survivor_incapped`,
+        `s`.`survivor_ff` AS `survivor_ff`,
+        `s`.`weapon_rifle` AS `weapon_rifle`,
+        `s`.`weapon_shotgun` AS `weapon_shotgun`,
+        `s`.`weapon_melee` AS `weapon_melee`,
+        `s`.`weapon_deagle` AS `weapon_deagle`,
+        `s`.`weapon_special` AS `weapon_special`,
+        `s`.`weapon_smg` AS `weapon_smg`,
+        `s`.`weapon_sniper` AS `weapon_sniper`,
+        `s`.`infected_killed` AS `infected_killed`,
+        `s`.`infected_headshot` AS `infected_headshot`,
+        `s`.`boomer_killed` AS `boomer_killed`,
+        `s`.`boomer_killed_clean` AS `boomer_killed_clean`,
+        `s`.`charger_killed` AS `charger_killed`,
+        `s`.`charger_pummeled` AS `charger_pummeled`,
+        `s`.`hunter_killed` AS `hunter_killed`,
+        `s`.`hunter_pounced` AS `hunter_pounced`,
+        `s`.`hunter_shoved` AS `hunter_shoved`,
+        `s`.`jockey_killed` AS `jockey_killed`,
+        `s`.`jockey_pounced` AS `jockey_pounced`,
+        `s`.`jockey_shoved` AS `jockey_shoved`,
+        `s`.`jockey_rided` AS `jockey_rided`,
+        `s`.`smoker_killed` AS `smoker_killed`,
+        `s`.`smoker_choked` AS `smoker_choked`,
+        `s`.`smoker_tongue_slashed` AS `smoker_tongue_slashed`,
+        `s`.`spitter_killed` AS `spitter_killed`,
+        `s`.`witch_killed` AS `witch_killed`,
+        `s`.`witch_killed_1shot` AS `witch_killed_1shot`,
+        `s`.`witch_harassed` AS `witch_harassed`,
+        `s`.`tank_killed` AS `tank_killed`,
+        `s`.`tank_melee` AS `tank_melee`,
+        `s`.`car_alarm` AS `car_alarm`,
+        (
+            (
+                (
+                    (
+                        (
+                            (
+                                (
+                                    (
+                                        (
+                                            (
+                                                (
+                                                    (
+                                                        (
+                                                            `APPLY_MODIFIER`(
+                                                                'survivor_revived',
+                                                                `s`.`survivor_revived`
+                                                            ) + `APPLY_MODIFIER`(
+                                                                'survivor_healed',
+                                                                `s`.`survivor_healed`
+                                                            )
+                                                        ) + `APPLY_MODIFIER`(
+                                                            'survivor_defibed',
+                                                            `s`.`survivor_defibed`
+                                                        )
+                                                    ) + `APPLY_MODIFIER`('survivor_ff', `s`.`survivor_ff`)
+                                                ) - `APPLY_MODIFIER`(
+                                                    'survivor_death',
+                                                    `s`.`survivor_death`
+                                                )
+                                            ) + `APPLY_MODIFIER`(
+                                                'infected_killed',
+                                                `s`.`infected_killed`
+                                            )
+                                        ) + `APPLY_MODIFIER`(
+                                            'infected_headshot',
+                                            `s`.`infected_headshot`
+                                        )
+                                    ) + `APPLY_MODIFIER`('boomer_killed', `s`.`boomer_killed`)
+                                ) + `APPLY_MODIFIER`(
+                                    'charger_killed',
+                                    `s`.`charger_killed`
+                                )
+                            ) + `APPLY_MODIFIER`('hunter_killed', `s`.`hunter_killed`)
+                        ) + `APPLY_MODIFIER`('jockey_killed', `s`.`jockey_killed`)
+                    ) + `APPLY_MODIFIER`(
+                        'spitter_killed',
+                        `s`.`spitter_killed`
+                    )
+                ) + `APPLY_MODIFIER`('witch_killed', `s`.`witch_killed`)
+            ) + `APPLY_MODIFIER`('tank_killed', `s`.`tank_killed`)
+        ) AS `total_points`,
+        row_number() OVER(
+        ORDER BY
+            (
+            (
+                (
+                    (
+                        (
+                            (
+                                (
+                                    (
+                                        (
+                                            (
+                                                (
+                                                    (
+                                                        (
+                                                            `APPLY_MODIFIER`(
+                                                                'survivor_revived',
+                                                                `s`.`survivor_revived`
+                                                            ) + `APPLY_MODIFIER`(
+                                                                'survivor_healed',
+                                                                `s`.`survivor_healed`
+                                                            )
+                                                        ) + `APPLY_MODIFIER`(
+                                                            'survivor_defibed',
+                                                            `s`.`survivor_defibed`
+                                                        )
+                                                    ) + `APPLY_MODIFIER`('survivor_ff', `s`.`survivor_ff`)
+                                                ) - `APPLY_MODIFIER`(
+                                                    'survivor_death',
+                                                    `s`.`survivor_death`
+                                                )
+                                            ) + `APPLY_MODIFIER`(
+                                                'infected_killed',
+                                                `s`.`infected_killed`
+                                            )
+                                        ) + `APPLY_MODIFIER`(
+                                            'infected_headshot',
+                                            `s`.`infected_headshot`
+                                        )
+                                    ) + `APPLY_MODIFIER`('boomer_killed', `s`.`boomer_killed`)
+                                ) + `APPLY_MODIFIER`(
+                                    'charger_killed',
+                                    `s`.`charger_killed`
+                                )
+                            ) + `APPLY_MODIFIER`('hunter_killed', `s`.`hunter_killed`)
+                        ) + `APPLY_MODIFIER`('jockey_killed', `s`.`jockey_killed`)
+                    ) + `APPLY_MODIFIER`(
+                        'spitter_killed',
+                        `s`.`spitter_killed`
+                    )
+                ) + `APPLY_MODIFIER`('witch_killed', `s`.`witch_killed`)
+            ) + `APPLY_MODIFIER`('tank_killed', `s`.`tank_killed`)
+        )
+        DESC
+            ,
+            `s`.`create_date`
+    ) AS `rank_num`,
+    `s`.`create_date` AS `create_date`
+FROM
+    `l4d2playerstat`.`STATS_PLAYERS` `s`) `b`
    
 CREATE TABLE DISPLAY_TEMPLATE (
   name VARCHAR(255) NOT NULL,
